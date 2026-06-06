@@ -194,11 +194,11 @@ Suggested screenshots:
 
 ## 👨‍💻 Author
 
-**Shannu**
+**Surya Someswar**
 
 Passionate about Web Development, AI, and Building Real-World Applications.
 
-GitHub: https://github.com/
+live-link: https://mentorlink-ai-95522.web.app
 
 ---
 
