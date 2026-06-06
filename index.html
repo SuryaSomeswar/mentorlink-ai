@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-all duration-300">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorLink AI - MVP</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class"
+        };
+    </script>
+
+    <style>
+        body{
+            transition:all .3s ease;
+        }
+
+        .glass{
+            backdrop-filter:blur(16px);
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.15);
+        }
+
+        .hover-lift{
+            transition:.3s ease;
+        }
+
+        .hover-lift:hover{
+            transform:translateY(-4px);
+        }
+
+        .gradient-bg{
+            background:
+            radial-gradient(circle at top left,#6366f1,transparent 35%),
+            radial-gradient(circle at bottom right,#06b6d4,transparent 35%),
+            #0f172a;
+        }
+
+        .light-bg{
+            background:
+            radial-gradient(circle at top left,#c7d2fe,transparent 35%),
+            radial-gradient(circle at bottom right,#bae6fd,transparent 35%),
+            #f8fafc;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(10px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .fade-in{
+            animation:fadeIn .4s ease;
+        }
+    </style>
+</head>
+
+<body
+id="body"
+class="min-h-screen light-bg text-slate-800 dark:text-white"
+>
+
+<!-- TOASTS -->
+<div
+id="toastContainer"
+class="fixed top-5 right-5 z-50 flex flex-col gap-3"
+></div>
+
+<!-- NAVBAR -->
+<nav
+id="navbar"
+class="hidden sticky top-0 z-40 border-b border-white/10 backdrop-blur-xl bg-white/20 dark:bg-slate-900/30"
+>
+    <div
+    class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between"
+    >
+
+        <div class="flex items-center gap-3">
+
+            <div
+            class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xl"
+            >
+                M
+            </div>
+
+            <div>
+                <h1 class="font-bold text-xl">
+                    MentorLink AI
+                </h1>
+
+                <p class="text-xs opacity-70">
+                    Mentorship Scheduler
+                </p>
+            </div>
+
+        </div>
+
+        <div class="flex items-center gap-3">
+
+            <button
+            id="themeToggle"
+            class="px-3 py-2 rounded-xl glass"
+            >
+                🌙
+            </button>
+
+            <button
+            id="dashboardBtn"
+            class="hidden px-4 py-2 rounded-xl bg-indigo-600 text-white"
+            >
+                Dashboard
+            </button>
+
+            <button
+            id="profileBtn"
+            class="hidden px-4 py-2 rounded-xl bg-cyan-600 text-white"
+            >
+                Profile
+            </button>
+
+            <button
+            id="sessionsBtn"
+            class="hidden px-4 py-2 rounded-xl bg-emerald-600 text-white"
+            >
+                Sessions
+            </button>
+
+            <div
+            id="userInfo"
+            class="hidden text-right"
+            >
+                <p
+                id="userEmail"
+                class="font-medium text-sm"
+                ></p>
+
+                <p
+                id="userRole"
+                class="text-xs opacity-70"
+                ></p>
+            </div>
+
+            <button
+            id="logoutBtn"
+            class="hidden px-4 py-2 rounded-xl bg-red-500 text-white"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+</nav>
+
+<!-- APP -->
+<div id="app">
+
+    <!-- AUTH VIEW -->
+    <section
+    id="authView"
+    class="min-h-screen flex items-center justify-center px-4 py-10"
+    >
+
+        <div
+        class="max-w-6xl w-full grid lg:grid-cols-2 gap-10 items-center"
+        >
+
+            <!-- LEFT -->
+            <div class="hidden lg:block fade-in">
+
+                <div class="glass rounded-3xl p-10">
+
+                    <span
+                    class="inline-flex px-4 py-2 rounded-full bg-indigo-500/20 text-indigo-600"
+                    >
+                        Smart Mentorship Platform
+                    </span>
+
+                    <h1
+                    class="text-5xl font-extrabold mt-6 leading-tight"
+                    >
+                        Connect
+                        Students
+                        With
+                        Alumni
+                        Mentors
+                    </h1>
+
+                    <p
+                    class="mt-5 opacity-80"
+                    >
+                        Discover alumni, schedule sessions,
+                        and accelerate your career growth.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- AUTH CARD -->
+            <div
+            class="glass rounded-3xl p-8 fade-in"
+            >
+
+                <div class="text-center mb-8">
+
+                    <h2
+                    id="authTitle"
+                    class="text-3xl font-bold"
+                    >
+                        Welcome Back
+                    </h2>
+
+                    <p
+                    id="authSubtitle"
+                    class="opacity-70 mt-2"
+                    >
+                        Login to continue
+                    </p>
+
+                </div>
+
+                <!-- LOGIN -->
+                <form
+                id="loginForm"
+                class="space-y-4"
+                >
+
+                    <input
+                    id="loginEmail"
+                    type="email"
+                    placeholder="Email"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+
+                    <input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="Password"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+
+                    <button
+                    id="loginBtn"
+                    type="submit"
+                    class="w-full py-3 rounded-xl bg-indigo-600 text-white"
+                    >
+                        Login
+                    </button>
+
+                </form>
+
+                <!-- SIGNUP -->
+                <form
+                id="signupForm"
+                class="space-y-4 hidden"
+                >
+
+                    <input
+                    id="signupName"
+                    type="text"
+                    placeholder="Full Name"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+
+                    <input
+                    id="signupEmail"
+                    type="email"
+                    placeholder="Email"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+
+                    <input
+                    id="signupPassword"
+                    type="password"
+                    placeholder="Password"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+
+                    <input
+                    id="signupConfirmPassword"
+                    type="password"
+                    placeholder="Confirm Password"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+
+                    <select
+                    id="signupRole"
+                    class="w-full p-3 rounded-xl border border-slate-300 bg-white/40"
+                    >
+                        <option value="student">
+                            Student
+                        </option>
+
+                        <option value="alumni">
+                            Alumni
+                        </option>
+                    </select>
+
+                    <button
+                    id="signupBtn"
+                    type="submit"
+                    class="w-full py-3 rounded-xl bg-cyan-600 text-white"
+                    >
+                        Create Account
+                    </button>
+
+                </form>
+
+                <div class="text-center mt-5">
+
+                    <button
+                    id="toggleAuth"
+                    class="text-indigo-600 font-medium"
+                    >
+                        Create an account
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- DASHBOARD VIEW -->
+    <section
+    id="dashboardView"
+    class="hidden max-w-7xl mx-auto px-4 py-8"
+    >
+            <!-- ANALYTICS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+
+            <div class="glass rounded-3xl p-6">
+                <p class="text-sm opacity-70">Total Alumni</p>
+                <h3 id="totalAlumni" class="text-4xl font-bold mt-2">0</h3>
+            </div>
+
+            <div class="glass rounded-3xl p-6">
+                <p class="text-sm opacity-70">My Bookings</p>
+                <h3 id="totalBookings" class="text-4xl font-bold mt-2">0</h3>
+            </div>
+
+            <div class="glass rounded-3xl p-6">
+                <p class="text-sm opacity-70">Upcoming Sessions</p>
+                <h3 id="upcomingSessions" class="text-4xl font-bold mt-2">0</h3>
+            </div>
+
+        </div>
+
+        <!-- SEARCH -->
+        <div class="glass rounded-3xl p-5 mb-8">
+
+            <input
+            id="searchInput"
+            type="text"
+            placeholder="Search alumni by name or email..."
+            class="w-full p-4 rounded-xl border border-slate-300 bg-white/40"
+            >
+
+        </div>
+
+        <!-- ALUMNI GRID -->
+        <div
+        id="alumniGrid"
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        ></div>
+
+        <!-- EMPTY STATE -->
+        <div
+        id="emptyState"
+        class="hidden glass rounded-3xl p-10 text-center"
+        >
+            <h3 class="text-2xl font-bold">
+                No Alumni Found
+            </h3>
+
+            <p class="opacity-70 mt-2">
+                Try another search.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- PROFILE VIEW -->
+    <section
+    id="profileView"
+    class="hidden max-w-4xl mx-auto px-4 py-10"
+    >
+
+        <div class="glass rounded-3xl p-8">
+
+            <h2 class="text-3xl font-bold mb-6">
+                Profile Settings
+            </h2>
+
+            <form
+            id="profileForm"
+            class="space-y-5"
+            >
+
+                <input
+                id="profileName"
+                type="text"
+                placeholder="Full Name"
+                class="w-full p-4 rounded-xl border border-slate-300 bg-white/40"
+                >
+
+                <input
+                id="profilePhoto"
+                type="text"
+                placeholder="Profile Photo URL"
+                class="w-full p-4 rounded-xl border border-slate-300 bg-white/40"
+                >
+
+                <textarea
+                id="profileBio"
+                rows="5"
+                placeholder="Bio"
+                class="w-full p-4 rounded-xl border border-slate-300 bg-white/40"
+                ></textarea>
+
+                <button
+                type="submit"
+                class="px-6 py-3 rounded-xl bg-indigo-600 text-white"
+                >
+                    Save Profile
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- SESSIONS VIEW -->
+    <section
+    id="sessionsView"
+    class="hidden max-w-7xl mx-auto px-4 py-10"
+    >
+
+        <h2 class="text-3xl font-bold mb-6">
+            Upcoming Sessions
+        </h2>
+
+        <div
+        id="sessionsContainer"
+        class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        ></div>
+
+    </section>
+
+</div>
+
+<!-- BOOKING MODAL -->
+<div
+id="bookingModal"
+class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4"
+>
+
+    <div
+    class="glass rounded-3xl p-8 w-full max-w-xl"
+    >
+
+        <div class="flex items-center justify-between mb-6">
+
+            <div>
+                <h3 class="text-2xl font-bold">
+                    Book Session
+                </h3>
+
+                <p
+                id="selectedAlumniName"
+                class="opacity-70"
+                >
+                    Alumni
+                </p>
+            </div>
+
+            <button
+            id="closeBookingModal"
+            class="text-3xl"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <input
+        id="bookingDate"
+        type="date"
+        class="w-full p-4 rounded-xl border border-slate-300 bg-white/40 mb-6"
+        >
+
+        <div
+        id="timeSlots"
+        class="grid grid-cols-2 md:grid-cols-5 gap-3"
+        >
+
+            <button class="slot-btn p-3 rounded-xl glass" data-time="09:00">09:00</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="09:30">09:30</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="10:00">10:00</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="10:30">10:30</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="11:00">11:00</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="11:30">11:30</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="14:00">14:00</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="14:30">14:30</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="15:00">15:00</button>
+            <button class="slot-btn p-3 rounded-xl glass" data-time="15:30">15:30</button>
+
+        </div>
+
+        <div class="flex justify-end gap-3 mt-8">
+
+            <button
+            id="cancelBookingBtn"
+            class="px-5 py-3 rounded-xl border border-slate-400"
+            >
+                Cancel
+            </button>
+
+            <button
+            id="confirmBookingBtn"
+            class="px-5 py-3 rounded-xl bg-indigo-600 text-white"
+            >
+                Confirm Booking
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer
+class="border-t border-white/10 mt-12"
+>
+
+    <div
+    class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-3"
+    >
+
+        <div>
+            <h3 class="font-bold">
+                MentorLink AI
+            </h3>
+
+            <p class="text-sm opacity-70">
+                Smart Alumni-Student Mentorship Scheduler
+            </p>
+        </div>
+
+        <div class="text-sm opacity-70">
+            © 2026 MentorLink AI
+        </div>
+
+    </div>
+
+</footer>
+
+<script type="module" src="./app.js"></script>
+
+</body>
+</html>
